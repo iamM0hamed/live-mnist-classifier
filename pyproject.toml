@@ -1,0 +1,27 @@
+[project]
+name = "live-mnist"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Hamed", email = "mah2mdahm3d121@gmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "keras>=3.15.1",
+    "numpy>=2.5.2",
+    "pillow>=12.3.0",
+    "streamlit>=1.63.0",
+    "streamlit-drawable-canvas>=0.13.0",
+    "torch>=2.14.0",
+]
+
+[project.scripts]
+live-mnist = "live_mnist:main"
+
+[[tool.uv.index]]
+url = "https://download.pytorch.org/whl/cpu"
+
+[build-system]
+requires = ["uv_build>=0.12.7,<0.13.0"]
+build-backend = "uv_build"
