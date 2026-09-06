@@ -37,59 +37,99 @@ st.markdown(
     """
     <style>
 
+        /* ---------- Main header ---------- */
+
         .main-title {
             text-align: center;
-            font-size: 2.8rem;
+            font-size: 2.6rem;
             font-weight: 700;
-            margin-bottom: 0.2rem;
+            margin-bottom: 0.15rem;
         }
 
         .subtitle {
             text-align: center;
             color: #888888;
-            font-size: 1.05rem;
-            margin-bottom: 2rem;
+            font-size: 1rem;
+            margin-bottom: 1.8rem;
         }
+
+
+        /* ---------- Section titles ---------- */
 
         .section-title {
-            font-size: 1.35rem;
+            font-size: 1.25rem;
             font-weight: 600;
-            margin-bottom: 0.7rem;
+            margin-bottom: 0.45rem;
         }
 
-        .prediction-box {
-            padding: 1.5rem;
-            border-radius: 1rem;
+
+        /* ---------- Prediction card ---------- */
+
+        .prediction-card {
             border: 1px solid rgba(128, 128, 128, 0.25);
+            border-radius: 14px;
+            padding: 1.2rem;
             text-align: center;
-            margin-top: 1rem;
-            margin-bottom: 1.5rem;
+            margin-top: 0.5rem;
+            margin-bottom: 1.3rem;
         }
 
         .prediction-label {
-            font-size: 1rem;
             color: #888888;
-            margin-bottom: 0.3rem;
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
         }
 
         .prediction-digit {
-            font-size: 5rem;
+            font-size: 4.2rem;
             font-weight: 800;
             line-height: 1;
+            margin: 0.3rem 0;
         }
 
         .confidence {
-            font-size: 1.15rem;
-            margin-top: 0.7rem;
+            font-size: 1rem;
+            margin-top: 0.5rem;
         }
+
+
+        /* ---------- Result cards ---------- */
+
+        .result-card {
+            border: 1px solid rgba(128, 128, 128, 0.2);
+            border-radius: 14px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+
+        /* ---------- Footer ---------- */
 
         .footer {
             text-align: center;
             color: #888888;
-            font-size: 0.85rem;
-            margin-top: 3rem;
+            font-size: 0.75rem;
+            margin-top: 2rem;
+            padding-top: 0.7rem;
+            border-top: 1px solid rgba(128, 128, 128, 0.15);
+        }
+
+
+        /* ---------- Sidebar ---------- */
+
+        [data-testid="stSidebar"] {
             padding-top: 1rem;
-            border-top: 1px solid rgba(128, 128, 128, 0.2);
+        }
+
+        [data-testid="stSidebar"] h1,
+        [data-testid="stSidebar"] h2,
+        [data-testid="stSidebar"] h3 {
+            margin-top: 0.4rem;
+            margin-bottom: 0.4rem;
+        }
+
+        [data-testid="stSidebar"] .stMarkdown {
+            margin-bottom: 0.4rem;
         }
 
     </style>
@@ -157,10 +197,7 @@ with st.sidebar:
 
     st.header("About")
 
-    st.write("""
-        This application uses a Convolutional Neural Network
-        trained on the MNIST handwritten digit dataset.
-        """)
+    st.write("A CNN trained on the MNIST handwritten digit dataset.")
 
     st.divider()
 
@@ -174,8 +211,7 @@ with st.sidebar:
     st.divider()
 
     st.caption(
-        "The drawing is converted into the same format used "
-        "during MNIST training before prediction."
+        "Your drawing is preprocessed into the same " "format used during training."
     )
 
 
@@ -183,7 +219,10 @@ with st.sidebar:
 # Main layout
 # --------------------------------------------------
 
-draw_col, result_col = st.columns([1.1, 1])
+draw_col, result_col = st.columns(
+    [1, 1],
+    gap="large",
+)
 
 
 # ==================================================
@@ -197,10 +236,12 @@ with draw_col:
         unsafe_allow_html=True,
     )
 
-    st.write("Draw one digit in the canvas below.")
+    st.caption("Draw one digit inside the canvas.")
 
-    if st.button("🗑️ Clear", use_container_width=True):
-
+    if st.button(
+        "🗑️ Clear",
+        use_container_width=True,
+    ):
         st.session_state.canvas_key += 1
         st.rerun()
 
@@ -209,8 +250,8 @@ with draw_col:
         stroke_width=19,
         stroke_color="white",
         background_color="black",
-        width=450,
-        height=450,
+        width=320,
+        height=400,
         drawing_mode="freedraw",
         key=f"canvas_{st.session_state.canvas_key}",
         update_streamlit=True,
@@ -257,40 +298,43 @@ with result_col:
             confidence = float(predictions[0][predicted_digit])
 
             # --------------------------------------
-            # Main prediction
+            # Prediction card
             # --------------------------------------
 
-            st.markdown(
-                f"""
-                <div class="prediction-box">
+            # st.markdown(
+            #     f"""
+            #     <div class="prediction-card">
 
-                    <div class="prediction-label">
-                        Predicted Digit
-                    </div>
+            #         <div class="prediction-label">
+            #             Predicted Digit
+            #         </div>
 
-                    <div class="prediction-digit">
-                        {predicted_digit}
-                    </div>
+            #         <div class="prediction-digit">
+            #             {predicted_digit}
+            #         </div>
 
-                    <div class="confidence">
-                        Confidence:
-                        <strong>{confidence:.2%}</strong>
-                    </div>
+            #         <div class="confidence">
+            #             Confidence:
+            #             <strong>{confidence:.2%}</strong>
+            #         </div>
 
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
+            #     </div>
+            #     """,
+            #     unsafe_allow_html=True,
+            # )
 
             # --------------------------------------
             # Processed image
             # --------------------------------------
 
-            st.subheader("Processed Image")
+            st.markdown(
+                '<div class="section-title">Processed Image</div>',
+                unsafe_allow_html=True,
+            )
 
             st.image(
                 processed_image[0, :, :, 0],
-                width=180,
+                width=140,
                 clamp=True,
             )
 
@@ -300,7 +344,10 @@ with result_col:
             # Probabilities
             # --------------------------------------
 
-            st.subheader("Class Probabilities")
+            st.markdown(
+                '<div class="section-title">Class Probabilities</div>',
+                unsafe_allow_html=True,
+            )
 
             for digit, probability in enumerate(predictions[0]):
 
@@ -319,7 +366,7 @@ with result_col:
 st.markdown(
     """
     <div class="footer">
-        MNIST Digit Classifier · Built with Keras & Streamlit
+        MNIST Digit Classifier · Keras · Streamlit
     </div>
     """,
     unsafe_allow_html=True,
